@@ -100,6 +100,7 @@ def main():
     ap.add_argument('-b', '--block-size', type=parse_size, default='1M')
     ap.add_argument('-p', '--processes', type=int, default=os.cpu_count())
     ap.add_argument('-g', '--graph', default=False, action='store_true')
+    ap.add_argument('-m', '--mmap', default=False, action='store_true')
     ap.add_argument('-G', '--hilbert-curve-heatmap', default=False, action='store_true')
     ap.add_argument('-c', '--output-csv', type=str, metavar='FILENAME')
     ap.add_argument('filename')
@@ -114,8 +115,10 @@ def main():
         print("block size > file size. will not")
         exit(42)
 
-    blocks = read_mmap(args.filename, args.block_size)
-    #blocks = read_file(args.filename, args.block_size)
+    if args.mmap:
+        blocks = read_mmap(args.filename, args.block_size)
+    else:
+        blocks = read_file(args.filename, args.block_size)
 
     print('processes:', args.processes)
     with Pool(args.processes) as p:
